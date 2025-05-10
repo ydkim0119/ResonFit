@@ -70,13 +70,13 @@ ResonFit/
 - [x] Implement `AmplitudePhaseNormalizer` class
 
 #### Fitting Methods
-- [ ] Implement `DCMFitter` class (Diameter Correction Method) - **IN PROGRESS**
-- [ ] Implement `InverseFitter` class (Inverse S21 Method)
+- [x] Implement `DCMFitter` class (Diameter Correction Method)
+- [ ] Implement `InverseFitter` class (Inverse S21 Method) - **NEXT STEP**
 - [ ] Implement `CPZMFitter` class (Closest Pole and Zero Method)
 
 #### Visualization Tools
-- [ ] Implement basic plotting utilities
-- [ ] Implement specialized plots for each processing step
+- [x] Implement basic plotting utilities
+- [x] Implement specialized plots for each processing step
 
 ### Interface Implementations
 
@@ -200,26 +200,37 @@ class ResonatorPipeline:
 - [ ] Implement concrete classes for existing functionality:
   - [x] CableDelayCorrector
   - [x] AmplitudePhaseNormalizer
-  - [ ] DCMFitter - **IN PROGRESS**
+  - [x] DCMFitter
+  - [x] ResonancePlotter
 - [x] Create basic pipeline implementation
-- [ ] Implement essential visualization tools - **NEXT STEP**
+- [x] Create basic example notebook
 
-### Phase 2: Testing and Documentation
+### Phase 2: Complete the Fitting Methods Implementation
+
+- [ ] Implement remaining fitting methods:
+  - [ ] InverseFitter - **NEXT STEP**
+  - [ ] CPZMFitter
+- [ ] Add examples for each fitting method
+- [ ] Implement fitting method comparison functionality
+- [ ] Add Q-factor vs. power analysis utilities
+
+### Phase 3: Testing and Documentation
 
 - [ ] Develop comprehensive test suite
   - [ ] Unit tests for preprocessing modules
   - [ ] Unit tests for fitting methods
   - [ ] Integration tests for pipeline
 - [ ] Create example notebooks
-  - [ ] Basic usage example
+  - [x] Basic usage example
   - [ ] Custom pipeline example
   - [ ] Advanced fitting example
+  - [ ] Fitting method comparison example
 - [ ] Set up documentation
   - [ ] Generate API documentation using Sphinx
   - [ ] Write detailed README
   - [ ] Create contribution guidelines
 
-### Phase 3: PyPI Packaging
+### Phase 4: PyPI Packaging
 
 - [x] Set up package distribution
   - [x] Finalize setup.py
@@ -231,7 +242,7 @@ class ResonatorPipeline:
   - [ ] Configure PyPI publication workflow
 - [ ] Create initial PyPI release
 
-### Phase 4: Extension and Enhancement
+### Phase 5: Extension and Enhancement
 
 - [ ] Implement advanced features
   - [ ] Add additional fitting methods
@@ -245,22 +256,28 @@ class ResonatorPipeline:
 ## Current Progress (May 2025)
 
 ### Completed Tasks
-- Basic repository structure is set up
-- Base interfaces and abstract classes are implemented
-- Core module implementation is complete
-- Preprocessing modules are implemented
-- Basic fitting module structure is in place
+- [x] Basic repository structure is set up
+- [x] Base interfaces and abstract classes are implemented
+- [x] Core module implementation is complete
+- [x] Preprocessing modules are implemented and tested
+- [x] DCMFitter has been implemented and tested
+- [x] Visualization module with ResonancePlotter is implemented
+- [x] Basic usage example is created
+- [x] Package setup configuration is complete
 
 ### In Progress
-- DCM Fitting method implementation is currently being modularized from the original `Resonator_Fitter.py` file
-- Creating fitting methods for various resonator models (DCM, Inverse, CPZM)
+- [ ] Implementing InverseFitter class - **NEXT STEP**
+- [ ] Implementing CPZMFitter class
+- [ ] Creating comprehensive test suite
+- [ ] Setting up CI/CD pipeline
 
 ### Next Steps
-1. Complete modularization of DCMFitter from the original code
-2. Implement InverseFitter and CPZMFitter classes
-3. Create visualization module
-4. Add examples and test cases
-5. Set up CI/CD and prepare for PyPI release
+1. Complete the implementation of InverseFitter class
+2. Implement CPZMFitter class
+3. Add test suite for all modules
+4. Create additional examples demonstrating each fitting method
+5. Set up documentation and generate API docs
+6. Configure CI/CD and prepare for PyPI release
 
 ## Extensibility Plan
 
