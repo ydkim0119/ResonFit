@@ -133,6 +133,48 @@ class ResonatorPipeline:
         """
         return self._intermediate_results
     
+    def get_intermediate_data(self, index):
+        """
+        Get the S21 data after a specific preprocessing step.
+        
+        Parameters
+        ----------
+        index : int
+            Index of the preprocessing step (0 for the first step, etc.)
+        
+        Returns
+        -------
+        array_like
+            S21 data after the specified preprocessing step
+        
+        Raises
+        ------
+        IndexError
+            If index is out of range
+        """
+        if not self._intermediate_results:
+            raise ValueError("No intermediate results available. Run the pipeline first.")
+        
+        if index < 0 or index >= len(self.preprocessors):
+            raise IndexError(f"Index {index} out of range. Pipeline has {len(self.preprocessors)} preprocessing steps.")
+        
+        # Get the specified preprocessor's output
+        preprocessor = self.preprocessors[index]
+        step_name = f"{preprocessor.__class__.__name__}_{index}"
+        
+        if step_name in self._intermediate_results:
+            # Return only the s21 data (second element of the tuple)
+            return self._intermediate_results[step_name][1]
+        
+        # Fallback: return the final preprocessed data
+        for i in range(index, -1, -1):
+            step_name = f"{self.preprocessors[i].__class__.__name__}_{i}"
+            if step_name in self._intermediate_results:
+                return self._intermediate_results[step_name][1]
+        
+        # If no intermediate result is found, return the original data
+        return self._intermediate_results.get('original', (None, None))[1]
+    
     def _generate_plots(self):
         """Generate plots of the pipeline results."""
         # This will be implemented when the visualization module is added
