@@ -1,4 +1,5 @@
 from setuptools import setup, find_packages
+import io
 
 setup(
     name="resonfit",
@@ -22,7 +23,7 @@ setup(
     author="ydkim0119",
     author_email="youremail@example.com",  # Update with your email
     description="A modular tool for fitting superconducting resonator data",
-    long_description=open("README.md").read(),
+    long_description=io.open("README.md", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
     url="https://github.com/ydkim0119/ResonFit",
     classifiers=[
