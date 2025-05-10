@@ -110,6 +110,24 @@ class CableDelayCorrector(BasePreprocessor):
         
         return freqs, s21_corrected
     
+    def get_delay(self):
+        """
+        Get the optimal cable delay.
+        
+        Returns
+        -------
+        float
+            Optimal cable delay (seconds)
+            
+        Raises
+        ------
+        ValueError
+            If the delay has not been optimized yet
+        """
+        if self.optimal_delay is None:
+            raise ValueError("Delay has not been optimized yet. Run preprocess() first.")
+        return self.optimal_delay
+    
     def __str__(self):
         """String representation with optimization status."""
         status = f"optimal_delay={self.optimal_delay*1e9:.3f} ns" if self.optimal_delay is not None else "not optimized"
