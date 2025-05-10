@@ -1,8 +1,11 @@
 """
-ResonFit: A modular Python package for analyzing and fitting superconducting resonator S21 data.
+ResonFit: A modular tool for fitting superconducting resonator data
+
+This package provides tools for analyzing S21 transmission data from superconducting
+microwave resonators. It includes modules for data preprocessing, fitting, and visualization.
 """
 
 __version__ = "0.1.0"
 
-# Import core components for easier access
+# Convenience imports
 from resonfit.core.pipeline import ResonatorPipeline
