@@ -15,7 +15,9 @@ resonfit/core/pipeline.py
 resonfit/fitting/__init__.py
 resonfit/fitting/base.py
 resonfit/fitting/methods/__init__.py
+resonfit/fitting/methods/cpzm.py
 resonfit/fitting/methods/dcm.py
+resonfit/fitting/methods/inverse.py
 resonfit/preprocessing/__init__.py
 resonfit/preprocessing/base.py
 resonfit/preprocessing/delay.py
