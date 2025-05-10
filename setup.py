@@ -14,13 +14,13 @@ setup(
             "pytest>=6.0.0",
             "pytest-cov>=2.12.0",
             "black>=21.5b2",
-            "isort>=5.9.0",
             "sphinx>=4.0.0",
-            "sphinx-rtd-theme>=1.0.0",
+            "sphinx-rtd-theme>=0.5.0",
+            "ipykernel>=6.0.0",  # For notebook examples
         ],
     },
     author="ydkim0119",
-    author_email="ydkim0119@example.com",  # Replace with your actual email
+    author_email="youremail@example.com",  # Update with your email
     description="A modular tool for fitting superconducting resonator data",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
