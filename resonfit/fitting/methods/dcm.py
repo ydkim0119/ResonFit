@@ -9,7 +9,7 @@ import numpy as np
 from scipy.optimize import least_squares
 import warnings
 
-from ..base import BaseFitter
+from ...core.base import BaseFitter
 from ...core.models import dcm_model, calculate_Qi_from_DCM
 
 
