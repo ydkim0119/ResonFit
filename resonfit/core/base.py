@@ -1,8 +1,8 @@
 """
-Abstract base classes for ResonFit components.
+Base classes for the ResonFit package.
 
-This module defines the core interfaces that all preprocessing and fitting
-components must implement.
+This module defines the abstract base classes that serve as interfaces
+for the different components of the resonator fitting process.
 """
 
 from abc import ABC, abstractmethod
@@ -13,8 +13,8 @@ class BasePreprocessor(ABC):
     """
     Base class for all preprocessing modules.
     
-    A preprocessor transforms the raw S21 data to prepare it for fitting.
-    Examples include cable delay correction and amplitude/phase normalization.
+    Preprocessors transform the raw frequency and S21 data to prepare it
+    for fitting, such as removing cable delay or normalizing the data.
     """
     
     @abstractmethod
@@ -25,9 +25,9 @@ class BasePreprocessor(ABC):
         Parameters
         ----------
         freqs : array_like
-            Frequency data array (Hz)
+            Frequency data (Hz)
         s21 : array_like
-            Complex S21 transmission data
+            Complex S21 data
             
         Returns
         -------
@@ -36,51 +36,30 @@ class BasePreprocessor(ABC):
         """
         pass
     
-    @property
-    @abstractmethod
-    def name(self):
-        """
-        Return the name of the preprocessor.
-        
-        Returns
-        -------
-        str
-            Name of the preprocessor
-        """
-        pass
-    
-    @property
-    def parameters(self):
-        """
-        Return the current parameters of the preprocessor.
-        
-        Returns
-        -------
-        dict
-            Dictionary of parameters
-        """
-        return {}
+    def __str__(self):
+        """String representation of the preprocessor."""
+        return f"{self.__class__.__name__}"
 
 
 class BaseFitter(ABC):
     """
     Base class for all fitting modules.
     
-    A fitter analyzes preprocessed S21 data to extract resonator parameters
-    such as resonance frequency, quality factors, etc.
+    Fitters perform the actual fitting of preprocessed S21 data to extract
+    resonator parameters such as resonance frequency, quality factors, etc.
     """
     
     @abstractmethod
     def fit(self, freqs, s21, **kwargs):
         """
-        Fit frequency and S21 data.
+        Fit frequency and S21 data to extract resonator parameters.
         
         Parameters
         ----------
         freqs : array_like
-            Frequency data array (Hz)
+            Frequency data (Hz)
         s21 : array_like
-            Complex S21 transmission data
+            Complex S21 data
         **kwargs
             Additional fitting parameters
             
@@ -94,41 +73,52 @@ class BaseFitter(ABC):
     @abstractmethod
     def get_model_data(self, freqs):
         """
-        Return model data for given frequencies.
+        Return model data for given frequencies using fitted parameters.
         
         Parameters
         ----------
         freqs : array_like
-            Frequency data array (Hz)
+            Frequency data (Hz)
             
         Returns
         -------
         array_like
-            Complex model S21 data
+            Model S21 data
         """
         pass
     
-    @property
+    def __str__(self):
+        """String representation of the fitter."""
+        return f"{self.__class__.__name__}"
+
+
+class BasePlotter(ABC):
+    """
+    Base class for visualization modules.
+    
+    Plotters create visualizations of the resonator data, fitting results,
+    and other relevant information.
+    """
+    
     @abstractmethod
-    def name(self):
+    def plot(self, freqs, s21, model=None, **kwargs):
         """
-        Return the name of the fitter.
+        Create visualization of resonator data and model fit.
         
+        Parameters
+        ----------
+        freqs : array_like
+            Frequency data (Hz)
+        s21 : array_like
+            Complex S21 data
+        model : array_like, optional
+            Model S21 data from fitting
+        **kwargs
+            Additional plotting parameters
+            
         Returns
         -------
-        str
-            Name of the fitter
+        object
+            Plot object (e.g., matplotlib figure)
         """
         pass
-    
-    @property
-    def parameters(self):
-        """
-        Return the current parameters of the fitter.
-        
-        Returns
-        -------
-        dict
-            Dictionary of parameters
-        """
-        return {}
