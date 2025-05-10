@@ -3,7 +3,7 @@ import io
 
 setup(
     name="resonfit",
-    version="0.1.0",
+    version="0.2.0",
     packages=find_packages(),
     install_requires=[
         "numpy>=1.20.0",
@@ -21,7 +21,7 @@ setup(
         ],
     },
     author="ydkim0119",
-    author_email="youremail@example.com",  # Update with your email
+    author_email="guaolbux@gmail.com",
     description="A modular tool for fitting superconducting resonator data",
     long_description=io.open("README.md", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
