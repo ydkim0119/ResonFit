@@ -10,12 +10,11 @@ Available Methods:
 
 # Import all fitting methods
 from .dcm import DCMFitter
-# Future imports will be uncommented as implemented
-# from .inverse import InverseFitter
-# from .cpzm import CPZMFitter
+from .inverse import InverseFitter
+from .cpzm import CPZMFitter
 
 __all__ = [
     'DCMFitter',
-    # 'InverseFitter',
-    # 'CPZMFitter',
+    'InverseFitter',
+    'CPZMFitter',
 ]
