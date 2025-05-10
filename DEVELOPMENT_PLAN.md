@@ -6,7 +6,7 @@ ResonFit is a Python package designed for analyzing and fitting superconducting 
 
 ## Repository Structure
 
-- [ ] Create the following repository structure:
+- [x] Create the following repository structure:
 
 ```
 ResonFit/
@@ -58,19 +58,19 @@ ResonFit/
 
 ### Modular Design
 
-- [ ] Refactor current code into modular design with the following components:
+- [x] Refactor current code into modular design with the following components:
 
 #### Base Classes and Interfaces
-- [ ] Create `BasePreprocessor` abstract class
-- [ ] Create `BaseFitter` abstract class
-- [ ] Implement `ResonatorPipeline` class
+- [x] Create `BasePreprocessor` abstract class
+- [x] Create `BaseFitter` abstract class
+- [x] Implement `ResonatorPipeline` class
 
 #### Preprocessing Modules
-- [ ] Implement `CableDelayCorrector` class
-- [ ] Implement `AmplitudePhaseNormalizer` class
+- [x] Implement `CableDelayCorrector` class
+- [x] Implement `AmplitudePhaseNormalizer` class
 
 #### Fitting Methods
-- [ ] Implement `DCMFitter` class (Diameter Correction Method)
+- [ ] Implement `DCMFitter` class (Diameter Correction Method) - **IN PROGRESS**
 - [ ] Implement `InverseFitter` class (Inverse S21 Method)
 - [ ] Implement `CPZMFitter` class (Closest Pole and Zero Method)
 
@@ -155,7 +155,7 @@ class BaseFitter(ABC):
 
 ### Pipeline Architecture
 
-- [ ] Implement the `ResonatorPipeline` class:
+- [x] Implement the `ResonatorPipeline` class:
 
 ```python
 class ResonatorPipeline:
@@ -195,14 +195,14 @@ class ResonatorPipeline:
 
 ### Phase 1: Core Implementation
 
-- [ ] Refactor current code into modular structure
-- [ ] Implement abstract base classes and interfaces
+- [x] Refactor current code into modular structure
+- [x] Implement abstract base classes and interfaces
 - [ ] Implement concrete classes for existing functionality:
-  - [ ] CableDelayCorrector
-  - [ ] AmplitudePhaseNormalizer
-  - [ ] DCMFitter
-- [ ] Create basic pipeline implementation
-- [ ] Implement essential visualization tools
+  - [x] CableDelayCorrector
+  - [x] AmplitudePhaseNormalizer
+  - [ ] DCMFitter - **IN PROGRESS**
+- [x] Create basic pipeline implementation
+- [ ] Implement essential visualization tools - **NEXT STEP**
 
 ### Phase 2: Testing and Documentation
 
@@ -221,9 +221,9 @@ class ResonatorPipeline:
 
 ### Phase 3: PyPI Packaging
 
-- [ ] Set up package distribution
-  - [ ] Finalize setup.py
-  - [ ] Configure pyproject.toml
+- [x] Set up package distribution
+  - [x] Finalize setup.py
+  - [x] Configure pyproject.toml
   - [ ] Implement version management
 - [ ] Configure CI/CD
   - [ ] Set up GitHub Actions for testing
@@ -241,6 +241,26 @@ class ResonatorPipeline:
   - [ ] Optimize core algorithms
   - [ ] Add parallel processing support
   - [ ] Implement caching mechanisms
+
+## Current Progress (May 2025)
+
+### Completed Tasks
+- Basic repository structure is set up
+- Base interfaces and abstract classes are implemented
+- Core module implementation is complete
+- Preprocessing modules are implemented
+- Basic fitting module structure is in place
+
+### In Progress
+- DCM Fitting method implementation is currently being modularized from the original `Resonator_Fitter.py` file
+- Creating fitting methods for various resonator models (DCM, Inverse, CPZM)
+
+### Next Steps
+1. Complete modularization of DCMFitter from the original code
+2. Implement InverseFitter and CPZMFitter classes
+3. Create visualization module
+4. Add examples and test cases
+5. Set up CI/CD and prepare for PyPI release
 
 ## Extensibility Plan
 
@@ -294,7 +314,7 @@ class MachineLearningFitter(BaseFitter):
 ### PyPI Registration
 
 - [ ] Prepare for PyPI distribution
-  - [ ] Choose package name (resonfit)
+  - [x] Choose package name (resonfit)
   - [ ] Create PyPI account
   - [ ] Set up distribution workflow:
     ```bash
@@ -356,7 +376,7 @@ class MachineLearningFitter(BaseFitter):
 
 ```bash
 # Setup instructions
-git clone https://github.com/yourusername/ResonFit.git
+git clone https://github.com/ydkim0119/ResonFit.git
 cd ResonFit
 pip install -e ".[dev]"
 
