@@ -1,230 +1,139 @@
 """
-Pipeline for orchestrating resonator data analysis.
+Pipeline for resonator data processing and fitting.
 
-This module provides the ResonatorPipeline class, which allows users to
-combine different preprocessing and fitting methods into a custom workflow.
+This module provides the ResonatorPipeline class which orchestrates the
+preprocessing and fitting steps for resonator data analysis.
 """
 
 import numpy as np
-from typing import List, Dict, Tuple, Optional, Union
-
-from resonfit.core.base import BasePreprocessor, BaseFitter
 
 
 class ResonatorPipeline:
     """
     Pipeline for combining preprocessing and fitting steps.
     
-    This class allows users to build a custom analysis pipeline by
-    adding preprocessing steps and a fitting method, then execute
-    the entire workflow with a single call.
+    This class allows users to combine multiple preprocessing steps
+    with a fitting method to create a customized analysis workflow.
     
     Attributes
     ----------
     preprocessors : list
-        List of preprocessor objects
-    fitter : BaseFitter or None
-        Fitter object
+        List of preprocessor objects that implement the BasePreprocessor interface
+    fitter : object
+        Fitter object that implements the BaseFitter interface
     results : dict
-        Results from the last pipeline run
+        Dictionary containing the results of the last run
     """
     
     def __init__(self):
-        """Initialize the pipeline with empty components."""
+        """Initialize an empty pipeline."""
         self.preprocessors = []
         self.fitter = None
         self.results = {}
+        self._intermediate_results = {}
         self._original_data = None
-        self._processed_data = None
     
-    def add_preprocessor(self, preprocessor: BasePreprocessor):
+    def add_preprocessor(self, preprocessor):
         """
         Add a preprocessing step to the pipeline.
         
         Parameters
         ----------
         preprocessor : BasePreprocessor
-            Preprocessor object to add
-            
+            A preprocessor object that implements the BasePreprocessor interface
+        
         Returns
         -------
-        ResonatorPipeline
-            Self, for method chaining
+        self : ResonatorPipeline
+            Returns self for method chaining
         """
-        if not isinstance(preprocessor, BasePreprocessor):
-            raise TypeError("Preprocessor must be an instance of BasePreprocessor")
-        
         self.preprocessors.append(preprocessor)
         return self
     
-    def set_fitter(self, fitter: BaseFitter):
+    def set_fitter(self, fitter):
         """
         Set the fitting method for the pipeline.
         
         Parameters
         ----------
         fitter : BaseFitter
-            Fitter object to use
-            
+            A fitter object that implements the BaseFitter interface
+        
         Returns
         -------
-        ResonatorPipeline
-            Self, for method chaining
+        self : ResonatorPipeline
+            Returns self for method chaining
         """
-        if not isinstance(fitter, BaseFitter):
-            raise TypeError("Fitter must be an instance of BaseFitter")
-        
         self.fitter = fitter
         return self
     
-    def run(self, freqs: np.ndarray, s21: np.ndarray, plot: bool = False) -> Dict:
+    def run(self, freqs, s21, plot=False):
         """
-        Run the pipeline on the provided data.
+        Run the pipeline on the given data.
+        
+        This method applies each preprocessing step in sequence, then
+        runs the fitting method on the processed data.
         
         Parameters
         ----------
         freqs : array_like
-            Frequency data array (Hz)
+            Frequency data (Hz)
         s21 : array_like
-            Complex S21 transmission data
+            Complex S21 data
         plot : bool, optional
-            Whether to generate plots during the analysis. Default is False.
-            
+            Whether to generate plots during the run, by default False
+        
         Returns
         -------
         dict
-            Dictionary containing fitting results
-            
+            Results from the fitting process
+        
         Raises
         ------
         ValueError
             If no fitter has been set
         """
-        # Store original data
-        self._original_data = (np.asarray(freqs), np.asarray(s21))
+        if not self.preprocessors and not self.fitter:
+            raise ValueError("Pipeline is empty. Add preprocessors and a fitter before running.")
         
-        # Execute preprocessing steps
-        processed_freqs, processed_s21 = freqs.copy(), s21.copy()
-        preprocessing_results = []
+        # Save original data
+        self._original_data = (np.array(freqs), np.array(s21))
         
-        for preprocessor in self.preprocessors:
-            try:
-                processed_freqs, processed_s21 = preprocessor.preprocess(
-                    processed_freqs, processed_s21
-                )
-                preprocessing_results.append({
-                    "name": preprocessor.name,
-                    "parameters": preprocessor.parameters
-                })
-            except Exception as e:
-                raise RuntimeError(
-                    f"Error in preprocessor '{preprocessor.name}': {str(e)}"
-                ) from e
+        # Apply preprocessing steps
+        processed_freqs, processed_s21 = np.array(freqs).copy(), np.array(s21).copy()
+        self._intermediate_results = {'original': (processed_freqs.copy(), processed_s21.copy())}
         
-        self._processed_data = (processed_freqs, processed_s21)
+        for i, preprocessor in enumerate(self.preprocessors):
+            processed_freqs, processed_s21 = preprocessor.preprocess(processed_freqs, processed_s21)
+            step_name = f"{preprocessor.__class__.__name__}_{i}"
+            self._intermediate_results[step_name] = (processed_freqs.copy(), processed_s21.copy())
         
-        # Execute fitting step
-        if not self.fitter:
-            raise ValueError("No fitter has been set. Use set_fitter() to set a fitter.")
+        # Execute fitting if a fitter is available
+        if self.fitter:
+            self.results = self.fitter.fit(processed_freqs, processed_s21)
+            self._intermediate_results['final'] = (processed_freqs, processed_s21)
+        else:
+            self.results = {"warning": "No fitter set, returning preprocessed data only"}
         
-        try:
-            fitting_results = self.fitter.fit(processed_freqs, processed_s21)
-        except Exception as e:
-            raise RuntimeError(
-                f"Error in fitter '{self.fitter.name}': {str(e)}"
-            ) from e
+        # Generate plots if requested
+        if plot:
+            self._generate_plots()
         
-        # Store all results
-        self.results = {
-            "preprocessing": preprocessing_results,
-            "fitting": {
-                "name": self.fitter.name,
-                "parameters": self.fitter.parameters,
-                **fitting_results
-            }
-        }
-        
+        # Return the results
         return self.results
     
-    def get_model_data(self, freqs: Optional[np.ndarray] = None) -> np.ndarray:
+    def get_intermediate_results(self):
         """
-        Get model data from the fitter.
+        Get the intermediate results from the pipeline run.
         
-        Parameters
-        ----------
-        freqs : array_like, optional
-            Frequency data array (Hz). If None, uses frequencies from the last run.
-            
         Returns
         -------
-        array_like
-            Complex model S21 data
-            
-        Raises
-        ------
-        ValueError
-            If no fitter has been set or no data has been processed
+        dict
+            Dictionary containing the results of each step
         """
-        if not self.fitter:
-            raise ValueError("No fitter has been set. Use set_fitter() to set a fitter.")
-        
-        if freqs is None:
-            if self._processed_data is None:
-                raise ValueError("No data has been processed. Run the pipeline first.")
-            freqs = self._processed_data[0]
-        
-        return self.fitter.get_model_data(freqs)
+        return self._intermediate_results
     
-    def get_original_data(self) -> Tuple[np.ndarray, np.ndarray]:
-        """
-        Get the original data from the last run.
-        
-        Returns
-        -------
-        tuple
-            (freqs, s21) from the last run
-            
-        Raises
-        ------
-        ValueError
-            If no data has been processed
-        """
-        if self._original_data is None:
-            raise ValueError("No data has been processed. Run the pipeline first.")
-        
-        return self._original_data
-    
-    def get_processed_data(self) -> Tuple[np.ndarray, np.ndarray]:
-        """
-        Get the processed data from the last run.
-        
-        Returns
-        -------
-        tuple
-            (freqs, s21) after all preprocessing steps
-            
-        Raises
-        ------
-        ValueError
-            If no data has been processed
-        """
-        if self._processed_data is None:
-            raise ValueError("No data has been processed. Run the pipeline first.")
-        
-        return self._processed_data
-    
-    def clear(self):
-        """
-        Clear all preprocessors, fitter, and results.
-        
-        Returns
-        -------
-        ResonatorPipeline
-            Self, for method chaining
-        """
-        self.preprocessors = []
-        self.fitter = None
-        self.results = {}
-        self._original_data = None
-        self._processed_data = None
-        return self
+    def _generate_plots(self):
+        """Generate plots of the pipeline results."""
+        # This will be implemented when the visualization module is added
+        pass
