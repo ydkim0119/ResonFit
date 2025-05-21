@@ -33,8 +33,8 @@ ResonFit/
 │   │   └── methods/         # Different fitting methods
 │   │       ├── __init__.py
 │   │       ├── dcm.py       # Diameter Correction Method
-│   │       ├── inverse.py   # Inverse S21 Method (Planned)
-│   │       └── cpzm.py      # Closest Pole and Zero Method (Planned)
+│   │       ├── inverse.py   # Inverse S21 Method
+│   │       └── cpzm.py      # Closest Pole and Zero Method
 │   └── visualization/       # Visualization tools
 │       ├── __init__.py
 │       └── plotter.py       # Plotting utilities
@@ -46,7 +46,7 @@ ResonFit/
 ├── tests/                   # Test suite (To be developed)
 │   ├── __init__.py
 │   ├── test_preprocessing.py # (Planned)
-│   ├── test_fitting.py       # (Planned)
+│   ├── test_fitting.py       # (Started)
 │   └── test_visualization.py # (Planned)
 └── docs/                    # Documentation (To be developed)
     ├── conf.py              # Sphinx configuration (Planned)
@@ -71,130 +71,16 @@ ResonFit/
 
 #### Fitting Methods
 - [x] Implement `DCMFitter` class (Diameter Correction Method)
-- [ ] Implement `InverseFitter` class (Inverse S21 Method) - **NEXT STEP**
-- [ ] Implement `CPZMFitter` class (Closest Pole and Zero Method)
+- [x] Implement `InverseFitter` class (Inverse S21 Method)
+- [x] Implement `CPZMFitter` class (Closest Pole and Zero Method)
 
 #### Visualization Tools
 - [x] Implement basic plotting utilities in `ResonancePlotter`
 - [x] Implement specialized plots for each processing step accessible via `ResonancePlotter` and pipeline's `run_analysis_and_plot`
 
-### Interface Implementations
-
-#### BasePreprocessor
-
-```python
-from abc import ABC, abstractmethod
-
-class BasePreprocessor(ABC):
-    """Base class for all preprocessing modules"""
-    
-    @abstractmethod
-    def preprocess(self, freqs, s21):
-        """
-        Preprocess frequency and S21 data
-        
-        Parameters
-        ----------
-        freqs : array_like
-            Frequency data
-        s21 : array_like
-            Complex S21 data
-            
-        Returns
-        -------
-        tuple
-            Processed (freqs, s21) tuple
-        """
-        pass
-```
-
-#### BaseFitter
-
-```python
-from abc import ABC, abstractmethod # Added import for completeness
-
-class BaseFitter(ABC): # Added ABC inheritance
-    """Base class for all fitting modules"""
-    
-    @abstractmethod
-    def fit(self, freqs, s21, **kwargs):
-        """
-        Fit frequency and S21 data
-        
-        Parameters
-        ----------
-        freqs : array_like
-            Frequency data
-        s21 : array_like
-            Complex S21 data
-        **kwargs
-            Additional fitting parameters
-            
-        Returns
-        -------
-        dict
-            Fitting results and parameters
-        """
-        pass
-        
-    @abstractmethod
-    def get_model_data(self, freqs): # freqs added as argument
-        """
-        Return model data for given frequencies
-        
-        Parameters
-        ----------
-        freqs : array_like
-            Frequency data
-            
-        Returns
-        -------
-        array_like
-            Model S21 data
-        """
-        pass
-```
-
-### Pipeline Architecture
-
-- [x] Implement the `ResonatorPipeline` class:
-- [x] Add `run_analysis_and_plot` method for single-call full analysis and plotting.
-
-```python
-class ResonatorPipeline:
-    """Pipeline for combining preprocessing and fitting steps"""
-    
-    def __init__(self):
-        self.preprocessors = []
-        self.fitter = None
-        self.results = {}
-        self._intermediate_results = {}
-        self.plotter = None # Added for run_analysis_and_plot
-        
-    def add_preprocessor(self, preprocessor):
-        """Add preprocessing step"""
-        self.preprocessors.append(preprocessor)
-        return self
-        
-    def set_fitter(self, fitter):
-        """Set fitting method"""
-        self.fitter = fitter
-        return self
-        
-    def run(self, freqs, s21, plot=False): # Simplified for brevity, see actual implementation
-        """Run the pipeline"""
-        # ... (implementation for running steps) ...
-        return self.results
-
-    def run_analysis_and_plot(self, freqs, s21): # New method
-        """Run the full analysis pipeline and generate plots for each significant step."""
-        # ... (implementation for running steps and plotting) ...
-        return self.results
-```
-
 ## Implementation Roadmap
 
-### Phase 1: Core Implementation & Basic Functionality (Largely Complete)
+### Phase 1: Core Implementation & Basic Functionality (Completed)
 
 - [x] Refactor current code into modular structure
 - [x] Implement abstract base classes and interfaces
@@ -206,29 +92,29 @@ class ResonatorPipeline:
 - [x] Create `ResonatorPipeline` with basic `run` and comprehensive `run_analysis_and_plot`
 - [x] Create basic example (`basic_usage.py` Marimo app)
 
-### Phase 2: Complete the Fitting Methods Implementation
+### Phase 2: Complete the Fitting Methods Implementation (Completed)
 
-- [ ] Implement remaining fitting methods:
-  - [ ] `InverseFitter` - **NEXT STEP**
-  - [ ] `CPZMFitter`
+- [x] Implement remaining fitting methods:
+  - [x] `InverseFitter`
+  - [x] `CPZMFitter`
 - [ ] Add examples for each new fitting method
 - [ ] Implement fitting method comparison functionality (Planned)
 - [ ] Add Q-factor vs. power analysis utilities more deeply into the library (Conceptual in example now)
 
-### Phase 3: Testing and Documentation
+### Phase 3: Testing and Documentation (In Progress)
 
 - [ ] Develop comprehensive test suite
   - [ ] Unit tests for preprocessing modules
-  - [ ] Unit tests for fitting methods
+  - [x] Basic unit tests for fitting methods (started with DCMFitter)
   - [ ] Integration tests for pipeline
 - [ ] Create/Update example notebooks/scripts
   - [x] Basic usage example (`basic_usage.py` Marimo app)
   - [ ] Custom pipeline example (Can be derived from basic usage)
-  - [ ] Advanced fitting example (Once new fitters are added)
+  - [ ] Advanced fitting example (Now possible with all fitters implemented)
   - [ ] Fitting method comparison example (Planned)
 - [ ] Set up documentation
   - [ ] Generate API documentation using Sphinx
-  - [ ] Write detailed README (Good start, can be expanded)
+  - [x] Update README with current features (ongoing)
   - [ ] Create contribution guidelines (`CONTRIBUTING.md`)
 
 ### Phase 4: PyPI Packaging & Distribution (Partially Complete)
@@ -254,32 +140,33 @@ class ResonatorPipeline:
   - [ ] Add parallel processing support for batch analysis (if applicable)
 - [ ] GUI Interface (long-term consideration)
 
-## Current Progress (As of Update)
+## Current Progress (Updated)
 
 ### Completed Tasks
 - [x] Basic repository structure is set up.
 - [x] Base interfaces and abstract classes are implemented.
-- [x] Core module implementation for preprocessing, DCM fitting, and visualization is complete.
+- [x] Core module implementation for preprocessing, visualization is complete.
+- [x] All fitting methods (`DCMFitter`, `InverseFitter`, `CPZMFitter`) are implemented.
 - [x] `ResonatorPipeline` with `run` and `run_analysis_and_plot` methods implemented.
 - [x] `ResonancePlotter` provides detailed plots for each analysis stage.
 - [x] `basic_usage.py` Marimo example demonstrates full analysis and plotting.
 - [x] Package setup configuration (`setup.py`, `pyproject.toml`) is complete for PyPI.
-- [x] Guidance for manual PyPI release provided.
+- [x] Initial PyPI release performed (version 0.2.0).
+- [x] Basic unit testing started for fitting methods.
 
 ### In Progress
-- [ ] Implementing `InverseFitter` class - **NEXT MAJOR STEP**
-- [ ] Implementing `CPZMFitter` class
 - [ ] Developing a comprehensive test suite.
+- [ ] Expanding examples to demonstrate all fitting methods.
 - [ ] Setting up formal documentation (Sphinx).
 - [ ] Creating `CONTRIBUTING.md`.
 
 ### Next Steps
-1.  Complete the implementation of `InverseFitter` class.
-2.  Implement `CPZMFitter` class.
-3.  Develop unit and integration tests for all modules.
-4.  Create `CONTRIBUTING.md` and formal Sphinx documentation.
-5.  Set up CI/CD for automated testing and (optionally) PyPI deployment.
-6.  Consider community feedback and plan for Phase 5 enhancements.
+1. Expand test coverage for all modules (preprocessing, fitting, visualization).
+2. Create examples that showcase each fitting method and compare their performance.
+3. Implement method comparison functionality to help users select the best fitting approach.
+4. Set up GitHub Actions for CI/CD to automate testing and deployment.
+5. Create formal Sphinx documentation with API reference.
+6. Develop `CONTRIBUTING.md` guidelines to encourage community contributions.
 
 ## Extensibility Plan
 
@@ -336,26 +223,20 @@ class MachineLearningFitter(BaseFitter):
 
 ## Distribution Plan
 
-### PyPI Registration
-
-- [x] Prepare for PyPI distribution:
-  - [x] Choose package name (`resonfit`).
-  - [x] Create PyPI account and API Token.
-  - [x] Set up distribution workflow (manual steps performed):
-    ```bash
-    python -m pip install --upgrade build twine
-    python -m build
-    # Optional: python -m twine upload --repository testpypi dist/* (for testing)
-    python -m twine upload dist/*
-    ```
-
 ### Versioning Strategy
 
 - [x] Implement Semantic Versioning (SemVer):
   - MAJOR version for incompatible API changes.
   - MINOR version for new functionality in a backward-compatible manner.
   - PATCH version for backward-compatible bug fixes.
-  - (Currently at `0.1.0` as per `setup.py`)
+  - (Currently at `0.2.0` as per `setup.py`)
+
+### Future Releases
+
+- [ ] Version 0.3.0: Complete testing and documentation
+- [ ] Version 0.4.0: Add method comparison functionality and advanced examples
+- [ ] Version 0.5.0: Add background subtraction and additional preprocessing tools
+- [ ] Version 1.0.0: First stable release with complete documentation and test coverage
 
 ### CI/CD Pipeline (Planned)
 
@@ -364,13 +245,14 @@ class MachineLearningFitter(BaseFitter):
   - [ ] Building documentation automatically.
   - [ ] Publishing to PyPI automatically on new Git tags/releases.
 
-## Future Enhancements (Planned Features from original)
+## Future Enhancements (Planned Features)
 
 - [ ] Interactive Visualization (e.g., Plotly/Bokeh integration)
 - [ ] Advanced Fitting Methods (e.g., Bayesian, other ML approaches)
 - [ ] Automated Parameter Selection (intelligent initial guesses, adaptive weighting)
 - [ ] Batch Processing and Parallelization
 - [ ] GUI Interface (long-term)
+- [ ] Integration with other quantum measurement tools
 
 ## Getting Started for Contributors
 
