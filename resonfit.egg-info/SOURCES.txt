@@ -22,5 +22,7 @@ resonfit/preprocessing/__init__.py
 resonfit/preprocessing/base.py
 resonfit/preprocessing/delay.py
 resonfit/preprocessing/normalization.py
+resonfit/tests/__init__.py
+resonfit/tests/test_fitting.py
 resonfit/visualization/__init__.py
 resonfit/visualization/plotter.py
