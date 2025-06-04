@@ -14,8 +14,6 @@ ResonFit provides a comprehensive and extensible framework for analyzing S21 tra
 
 - 🔍 **Fitting Methods**
   - DCM (Diameter Correction Method)
-  - Inverse S21 Method
-  - CPZM (Closest Pole and Zero Method)
 
 - 🧩 **Flexible Pipeline**
   - Combine different preprocessing and fitting methods
@@ -38,7 +36,7 @@ pip install resonfit
 ```python
 from resonfit import ResonatorPipeline
 from resonfit.preprocessing import CableDelayCorrector, AmplitudePhaseNormalizer
-from resonfit.fitting.methods import DCMFitter, InverseFitter, CPZMFitter
+from resonfit.fitting.methods import DCMFitter
 import numpy as np
 
 # Load data
@@ -50,11 +48,8 @@ pipeline = ResonatorPipeline()
 pipeline.add_preprocessor(CableDelayCorrector())
 pipeline.add_preprocessor(AmplitudePhaseNormalizer())
 
-# Choose your fitting method (DCM, Inverse, or CPZM)
+# Set the fitting method (DCMFitter is available)
 pipeline.set_fitter(DCMFitter(weight_bandwidth_scale=1.0))
-# Alternative fitting methods:
-# pipeline.set_fitter(InverseFitter(weight_bandwidth_scale=1.0))
-# pipeline.set_fitter(CPZMFitter(weight_bandwidth_scale=1.0))
 
 # Run analysis with comprehensive plots
 results = pipeline.run_analysis_and_plot(freqs, s21)
