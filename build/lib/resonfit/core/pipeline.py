@@ -14,10 +14,10 @@ from ..preprocessing.base import fit_circle_algebraic # For plotter if needed
 class ResonatorPipeline:
     """
     Pipeline for combining preprocessing and fitting steps.
-    
+
     This class allows users to combine multiple preprocessing steps
     with a fitting method to create a customized analysis workflow.
-    
+
     Attributes
     ----------
     preprocessors : list
@@ -27,7 +27,7 @@ class ResonatorPipeline:
     results : dict
         Dictionary containing the results of the last run
     """
-    
+
     def __init__(self):
         """Initialize an empty pipeline."""
         self.preprocessors = []
@@ -36,16 +36,16 @@ class ResonatorPipeline:
         self._intermediate_results = {} # Stores (freqs, s21) tuples after each step
         self._original_data = None
         self.plotter = None # Will be initialized when needed
-    
+
     def add_preprocessor(self, preprocessor):
         """
         Add a preprocessing step to the pipeline.
-        
+
         Parameters
         ----------
         preprocessor : BasePreprocessor
             A preprocessor object that implements the BasePreprocessor interface
-        
+
         Returns
         -------
         self : ResonatorPipeline
@@ -53,16 +53,16 @@ class ResonatorPipeline:
         """
         self.preprocessors.append(preprocessor)
         return self
-    
+
     def set_fitter(self, fitter):
         """
         Set the fitting method for the pipeline.
-        
+
         Parameters
         ----------
         fitter : BaseFitter
             A fitter object that implements the BaseFitter interface
-        
+
         Returns
         -------
         self : ResonatorPipeline
@@ -70,14 +70,14 @@ class ResonatorPipeline:
         """
         self.fitter = fitter
         return self
-    
+
     def run(self, freqs, s21, plot=False): # Kept for backward compatibility or simple runs
         """
         Run the pipeline on the given data.
-        
+
         This method applies each preprocessing step in sequence, then
         runs the fitting method on the processed data.
-        
+
         Parameters
         ----------
         freqs : array_like
@@ -87,12 +87,12 @@ class ResonatorPipeline:
         plot : bool, optional
             If True, calls run_analysis_and_plot. Kept for simplicity, but
             run_analysis_and_plot offers more direct control. Default is False.
-        
+
         Returns
         -------
         dict
             Results from the fitting process
-        
+
         Raises
         ------
         ValueError
@@ -107,15 +107,15 @@ class ResonatorPipeline:
 
         # Save original data
         self._original_data = (np.array(freqs), np.array(s21))
-        
+
         processed_freqs, processed_s21 = np.array(freqs).copy(), np.array(s21).copy()
         self._intermediate_results['original'] = (processed_freqs.copy(), processed_s21.copy())
-        
+
         for i, preprocessor in enumerate(self.preprocessors):
             processed_freqs, processed_s21 = preprocessor.preprocess(processed_freqs, processed_s21)
             step_name = f"{preprocessor.__class__.__name__}_{i}"
             self._intermediate_results[step_name] = (processed_freqs.copy(), processed_s21.copy())
-        
+
         if self.fitter:
             self.results = self.fitter.fit(processed_freqs, processed_s21)
             self._intermediate_results['final_for_fitter'] = (processed_freqs.copy(), processed_s21.copy())
@@ -128,7 +128,7 @@ class ResonatorPipeline:
         else:
             self.results = {"warning": "No fitter set. Preprocessing complete."}
             self._intermediate_results['final_preprocessed_only'] = (processed_freqs.copy(), processed_s21.copy())
-        
+
         return self.results
 
     def run_analysis_and_plot(self, freqs, s21):
@@ -155,7 +155,7 @@ class ResonatorPipeline:
 
 
         print("--- Starting Full Analysis with Plotting ---")
-        
+
         # --- 0. Original Data ---
         print("\nPlotting Raw Data...")
         self._original_data = (np.array(freqs).copy(), np.array(s21).copy())
@@ -170,7 +170,7 @@ class ResonatorPipeline:
         for i, preprocessor in enumerate(self.preprocessors):
             print(f"\nRunning Preprocessor: {preprocessor.__class__.__name__}...")
             s21_before_this_preproc = current_s21.copy() # Data before this specific preprocessor
-            
+
             current_freqs, current_s21 = preprocessor.preprocess(current_freqs, current_s21)
             step_name = f"{preprocessor.__class__.__name__}_{i}"
             self._intermediate_results[step_name] = (current_freqs.copy(), current_s21.copy())
@@ -180,7 +180,7 @@ class ResonatorPipeline:
                 print("Plotting Cable Delay Correction Results...")
                 delay_params = preprocessor.get_final_params_for_plotting()
                 optimal_delay_ns = preprocessor.get_delay() * 1e9
-                
+
                 self.plotter.plot_delay_correction(
                     current_freqs, s21_before_this_preproc, current_s21,
                     optimal_delay_ns,
@@ -216,7 +216,7 @@ class ResonatorPipeline:
 
             if self.results and 'fr' in self.results: # Check if fit was successful enough to produce fr
                 print("Plotting Fitting Results...")
-                
+
                 # Common parameters for plot titles
                 fit_title_base = f"{self.fitter.__class__.__name__} Fit"
                 param_summary = []
@@ -224,7 +224,7 @@ class ResonatorPipeline:
                 if 'Qi' in self.results: param_summary.append(f"Qi={self.results['Qi']:.0f}")
                 if 'Ql' in self.results: param_summary.append(f"Ql={self.results['Ql']:.0f}")
                 if 'Qc_mag' in self.results: param_summary.append(f"|Qc|={self.results['Qc_mag']:.0f}") # For DCM
-                
+
                 fit_title = f"{fit_title_base}: {', '.join(param_summary)}"
 
                 # Fitter-specific plotting
@@ -269,31 +269,31 @@ class ResonatorPipeline:
     def get_intermediate_results(self):
         """
         Get the intermediate results from the pipeline run.
-        
+
         Returns
         -------
         dict
-            Dictionary containing the (freqs, s21) data of each step, plus 'fitted_model_s21' 
+            Dictionary containing the (freqs, s21) data of each step, plus 'fitted_model_s21'
             and/or 'fitted_model_s21_inv' if available.
         """
         return self._intermediate_results
-    
+
     def get_intermediate_data(self, step_identifier):
         """
         Get the S21 (or 1/S21 for specific keys) data after a specific step or the fitted model.
-        
+
         Parameters
         ----------
         step_identifier : int or str
             If int: Index of the preprocessing step (0 for the first step, etc.)
-            If str: Name of the intermediate result key (e.g., 'original', 
+            If str: Name of the intermediate result key (e.g., 'original',
                     'CableDelayCorrector_0', 'fitted_model_s21', 'fitted_model_s21_inv').
-        
+
         Returns
         -------
         tuple
             (freqs, data) after the specified step or for the model.
-        
+
         Raises
         ------
         KeyError or IndexError
@@ -303,7 +303,7 @@ class ResonatorPipeline:
         """
         if not self._intermediate_results:
             raise ValueError("No intermediate results available. Run the pipeline first.")
-        
+
         if isinstance(step_identifier, int):
             if step_identifier < 0 or step_identifier >= len(self.preprocessors):
                 raise IndexError(f"Preprocessor index {step_identifier} out of range. Pipeline has {len(self.preprocessors)} preprocessors.")
